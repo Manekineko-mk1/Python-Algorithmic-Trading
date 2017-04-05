@@ -31,7 +31,8 @@ def get_data():
 def analysis_csv():
     df = pd.read_csv('tsla.csv', parse_dates=True, index_col=0)
     # print(df.head())
-    df['Close'].plot()  # To plot specific column use df ['Column_Name'].plot()
+    # To plot specific column use df ['Column_Name'].plot() ... or mult. columns using [['a','b']]
+    df[['Open', 'High', 'Close']].tail(90).plot()
     plt.show()
     return
 
