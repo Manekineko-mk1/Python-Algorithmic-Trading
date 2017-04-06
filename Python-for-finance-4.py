@@ -10,9 +10,10 @@ import pandas_datareader as web
 
 style.use('ggplot')
 
+
 def run():
     data = table_manipulation()
-    # visualization(data)
+    visualization(data)
     return
 
 
@@ -30,6 +31,8 @@ def table_manipulation():
 
     # Step 1: Create new data frame
     df_ohlc = df['Adj Close'].resample('10D').ohlc()  # other options are mean(), sum()
+
+    global df_volume
     df_volume = df['Volume'].resample('10D').sum()
 
     # Step 2: Move table data to matplotlib, so we can graph the OHLC
@@ -37,17 +40,21 @@ def table_manipulation():
     df_ohlc.reset_index(inplace=True)
     df_ohlc['Date'] = df_ohlc['Date'].map(mdates.date2num)
 
-    print(df_ohlc.head())
-
-    return df
+    return df_ohlc.values
 
 
-def visualization(data_frame):
+def visualization(df_ohlc):
     # subplot2grid((x by y size), (starting coordinates), rowspan=, colspan=)
     ax1 = plt.subplot2grid((6, 1), (0, 0), rowspan=5, colspan=1)
+    # converts the axis from the raw mdate numbers to dates
+    ax1.xaxis_date()
     # sharex allows ax2 will always align its x axis with whatever ax1's is, and visa-versa
     ax2 = plt.subplot2grid((6, 1), (5, 0), rowspan=1, colspan=1, sharex=ax1)
 
+    candlestick_ohlc(ax1, df_ohlc, width=2, colorup='g')
+
+    # fill_between(x, y, starting_point)
+    ax2.fill_between(df_volume.index.map(mdates.date2num), df_volume.values, 0)
 
     plt.show()
 
