@@ -4,6 +4,7 @@ import requests
 
 # This demonstrates how to grab large stock data from Wikipedia, then work on all of those data at once.
 
+
 def run():
     save_sp500_ticker()
 
@@ -14,7 +15,7 @@ def save_sp500_ticker():
     soup = bs.BeautifulSoup(resp.text, "html.parser")
 
     # 2. Find the table of stock data by searching "wikitable sortable" class
-    table = soup.find('table', {'class':'wikitable sortable'})
+    table = soup.find('table', {'class': 'wikitable sortable'})
 
     # 3. Specific an empty ticker list. Then iterate through the table.
     tickers = []
