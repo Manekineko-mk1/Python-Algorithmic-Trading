@@ -1,12 +1,17 @@
 import bs4 as bs  # beautifulSoup
 import pickle  # serialize python objects (ex save S&P 500 list table)
 import requests
+import datetime as dt
+import os  # uses to create new directory
+import pandas as pd
+import pandas_datareader.data as web
 
-# This demonstrates how to grab large stock data from Wikipedia, then work on all of those data at once.
+# This demonstrates how to grab the pricing data from Yahoo, with the tickers we want.
 
 
 def run():
-    save_sp500_ticker()
+    # save_sp500_ticker()
+    get_data_from_yahoo()
 
 
 def save_sp500_ticker():
@@ -35,5 +40,30 @@ def save_sp500_ticker():
     print(tickers)
 
     return tickers
+
+
+def get_data_from_yahoo(reload_sp500=False):
+
+    # If true, then we grab ticker list from Wikipedia
+    if reload_sp500:
+        tickers = save_sp500_ticker()
+    else:
+        with open("sp500tickers.pickle", "rb") as f:
+            tickers = pickle.load(f)
+
+    if not os.path.exists('stock_dfs'):
+        os.makedirs('stock_dfs')
+
+    start = dt.datetime(2000, 1, 1)
+    end = dt.datetime (2017, 4, 6)
+
+    for ticker in tickers:
+        print("Grabbing price data for " + ticker)
+
+        if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
+            df = web.DataReader(ticker, 'yahoo', start, end)
+            df.to_csv('stock_dfs/{}.csv'.format(ticker))
+        else:
+            print('Already have {}'.format(ticker))
 
 run()
