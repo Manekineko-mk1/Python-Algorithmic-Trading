@@ -30,6 +30,10 @@ def save_sp500_ticker():
         # since we want the 0th column; the ticker symbols, so ... .text because it's a SOUP obj
         ticker = row.findAll('td')[0].text
 
+        # Getaround for Berkshire Hathaway ticker BRK.A
+        mapping = str.maketrans(".", "-")
+        ticker = ticker.translate(mapping)
+
         # This will give us an array of SP500 tickers list
         tickers.append(ticker)
 
@@ -65,5 +69,9 @@ def get_data_from_yahoo(reload_sp500=False):
             df.to_csv('stock_dfs/{}.csv'.format(ticker))
         else:
             print('Already have {}'.format(ticker))
+
+    print("Process completed.")
+
+    return
 
 run()
